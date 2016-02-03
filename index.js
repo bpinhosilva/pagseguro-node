@@ -5,7 +5,7 @@
 
 "use strict";
 
-var Item = require('./models/item');
+var Item = require('./lib/item');
 
 var PagSeguro = function (email, token, charset = 'UTF-8') {
 
