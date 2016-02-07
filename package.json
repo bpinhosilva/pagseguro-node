@@ -1,0 +1,26 @@
+{
+  "name": "pagseguro-node",
+  "version": "1.0.0",
+  "description": "This is a Node.js package which provides interaction with PagSeguro online payment system.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bpinhosilva/pagseguro-node.git"
+  },
+  "keywords": [
+    "pagseguro"
+  ],
+  "author": "Bruno Sampaio Pinho da Silva",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bpinhosilva/pagseguro-node/issues"
+  },
+  "homepage": "https://github.com/bpinhosilva/pagseguro-node#readme",
+  "dependencies": {
+    "request": "^2.69.0",
+    "xml2js": "^0.4.16"
+  }
+}
