@@ -8,12 +8,29 @@
 var request = require('request');
 var parseString = require('xml2js').parseString;
 
+var PROD_MODE = true;
+
 var Item = require('./lib/item');
 var Buyer = require('./lib/buyer');
 var Shipment = require('./lib/shipment');
-var URL_API_PAY = 'https://ws.pagseguro.uol.com.br/v2/checkout';
 
-var PagSeguro = function (email, token, charset = 'UTF-8') {
+var URL_API_PAY;
+
+if (PROD_MODE) {  // Production mode
+  URL_API_PAY = 'https://ws.pagseguro.uol.com.br/v2/checkout/';
+}
+else {  // Sandbox mode
+  URL_API_PAY = 'https://ws.sandbox.pagseguro.uol.com.br/v2/checkout/';
+}
+
+/**
+ * PagSeguro object interacts with payment API
+ * @param {string} email - account which makes requests to PagSeguro
+ * @param {string} token - necessary token to start requests
+ * @param {string} charset - optional charset
+ * @returns {object} PagSeguro object
+ */
+var PagSeguro = function (email, token, charset) {
 
   var self = this;
 
@@ -31,15 +48,18 @@ var PagSeguro = function (email, token, charset = 'UTF-8') {
   else if (arguments.length == 2) {
     self.token = token;
     self.email = email;
+    self.charset = 'UTF-8';
   }
   else {
      console.error('Error: correct parameters for PagSeguro -> (email, token [,charset])');
      return false;
   }
 
+  self.currency = "BRL";
   self.items = [];
-  self.buyer = {};
-  self.shipment = {};
+  self.buyer;
+  self.shipment;
+  self.reference = '';
   self.redirectURL = '';
   self.notificationURL = '';
   self.maxUses = 1000;
@@ -47,6 +67,16 @@ var PagSeguro = function (email, token, charset = 'UTF-8') {
 
   var mountQueryString = function () {
     var qs = {};
+
+    for (var i = 0; i < self.items.length; i++) {
+      qs = self.items[i].mountQueryString(i + 1, qs);
+    }
+
+    if (self.buyer) 
+      qs = self.buyer.mountQueryString(qs);
+
+    if (self.shipment)
+      qs = self.shipment.mountQueryString(qs);
 
     return qs;
   };
@@ -65,44 +95,63 @@ var PagSeguro = function (email, token, charset = 'UTF-8') {
       return null;
     },
     addBuyer : function (buyer) {
-      self.buyer.push(new Buyer(buyer));
+      self.buyer = new Buyer(buyer);
     },
     addShipment : function (spm) {
-      self.shipment.push(new Shipment(spm));
+      self.shipment = new Shipment(spm);
     },
     processOrder : function (callback) {
 
+      var hasCallback = true;
+
       if (!callback || typeof callback != "function") {
-        throw "Error: you must provide a callback for processOrder";
-        return null;
+        hasCallback = false;
       }
 
       var options = {
         url: URL_API_PAY,
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded; charset=' + self.charset;
+          'Content-Type': 'application/x-www-form-urlencoded; charset=' + self.charset
         }
       };
 
       options.qs = mountQueryString();
+
+      options.qs.email = self.email;
+      options.qs.token = self.token;
+      options.qs.currency = self.currency;
+
+      if (!PROD_MODE) console.log(options);
 
       request.post(options, function (error, response, body) {
 
         // parse xml returned from pagSeguro API
         parseString(body, function (err, result) {
 
+          // if you get an error here, make sure you are
+          // passing parameters correctly
+
           // error reading xml
           if (err) {
-            throw "Error: reading xml file";
-            return null;
+            console.log(err);
+            if (hasCallback)
+              callback(err, response, null); 
+            else
+              return err;
           }
 
           // got good response
-          if (!error && response.statusCode == 200) {            
-            callback(null, response, result.checkout);
+          if (!error && response.statusCode == 200) {
+            if (hasCallback)
+              callback(null, response, result.checkout);
+            else
+              return result.checkout;
           }
           else {  // got error
-            callback(result.errors.error, response, null); 
+            if (hasCallback)
+              callback(result.errors.error, response, null); 
+            else
+              return result.errors.error;
           }
         });
       });
@@ -113,4 +162,4 @@ var PagSeguro = function (email, token, charset = 'UTF-8') {
 };
 
 
-module.exports = Pagseguro;
+module.exports = PagSeguro;
