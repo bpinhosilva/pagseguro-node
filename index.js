@@ -8,6 +8,7 @@
 var request = require('request');
 var parseString = require('xml2js').parseString;
 
+// default mode
 var PROD_MODE = true;
 
 var Item = require('./lib/item');
@@ -15,6 +16,8 @@ var Buyer = require('./lib/buyer');
 var Shipment = require('./lib/shipment');
 
 var URL_API_PAY;
+var URL_API_PAY_PROD = 'https://ws.pagseguro.uol.com.br/v2/checkout/';
+var URL_API_PAY_SAND = 'https://ws.sandbox.pagseguro.uol.com.br/v2/checkout/';
 
 if (PROD_MODE) {  // Production mode
   URL_API_PAY = 'https://ws.pagseguro.uol.com.br/v2/checkout/';
@@ -82,6 +85,39 @@ var PagSeguro = function (email, token, charset) {
   };
 
   return {
+    setToken : function (newToken) {
+      self.token = newToken;
+    },
+    setEmail : function (email) {
+      if (email && typeof email === 'string')
+        self.email = email;
+    },
+    setMode : function (mode) {
+      if (mode && typeof mode === 'string') {
+        if (mode.toUpperCase() == 'SANDBOX')
+          PROD_MODE = false;
+        else if (mode.toUpperCase() == 'PROD')
+          PROD_MODE = true;
+      }
+      else if (typeof mode === 'boolean') {
+        if (mode)
+          PROD_MODE = true;
+        else
+          PROD_MODE = false;
+      }
+      else {
+        console.log('Invalid mode, default set: PROD');
+      }
+    },
+    setRedirectURL : function (url) {
+      self.redirectURL = url;
+    },
+    setNotificationURL : function (url) {
+      self.notificationURL = url;
+    },
+    setReference : function (ref) {
+      self.reference = ref;
+    },
     getItemsLength : function () {
       return self.items.length;
     },
@@ -109,7 +145,7 @@ var PagSeguro = function (email, token, charset) {
       }
 
       var options = {
-        url: URL_API_PAY,
+        url: PROD_MODE ? URL_API_PAY_PROD : URL_API_PAY_SAND,
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded; charset=' + self.charset
         }
@@ -120,6 +156,10 @@ var PagSeguro = function (email, token, charset) {
       options.qs.email = self.email;
       options.qs.token = self.token;
       options.qs.currency = self.currency;
+
+      if (self.redirectURL != '') options.qs.redirectURL = self.redirectURL;
+      if (self.notificationURL != '') options.qs.notificationURL = self.notificationURL;
+      if (self.reference != '') options.qs.reference = self.reference;
 
       if (!PROD_MODE) console.log(options);
 
