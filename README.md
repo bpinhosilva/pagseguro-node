@@ -1,4 +1,5 @@
 # pagseguro-node
+
 This is a Node.js package which provides interaction with PagSeguro online payment system. The method used for this module is HTTP Parameters. XML support coming soon!
 
 After you create your seller account and generated your token, you can start making requests.
@@ -13,13 +14,28 @@ Depois de criar sua conta de vendedor e gerar seu token, poderá começar a faze
 
 Tenha em mente que você pode usar token em dois ambientes: sandbox (teste) e produção. Eles são fornecidos pela API do PagSeguro, para maiores informações, leia a documentação deles.
 
+### Version (Versão)
+1.0.1
 
+### Installation (Instalação)
+
+```sh
+$ npm install pagseguro-node --save
+```
+
+### What's new (O que há de novo)
+```javascript
+pagSeguro.setMode('prod'); // or sanbox, default is prod
+pagSeguro.setToken('<your_token>');
+pagSeguro.setRedirectURL('http://somepoint/isback');
+pagSeguro.setReference('<stuff_ref_number>');
+pagSeguro.setNotificationURL('http://somepoint/notification');
+```
 
 
 #### Quick example (Exemplo rápido)
 
 ```javascript
-var request = require('request');
 var express = require('express');
 var app = express();
 
@@ -84,6 +100,10 @@ app.listen(3000, function () {
 
 
 ### Changelog
+
+Version 1.0.1 (Feb. 8th, 2016)
+* Created a few more methods:
+setToken, setEmail, setMode, setRedirectURL, setNotificationURL, setReference.
 
 Version 1.0.0 (Feb. 7th, 2016)
 * First release with basic interaction to start selling things on internet using PagSeguro.
