@@ -1,5 +1,5 @@
 # pagseguro-node
-This is a Node.js package which provides interaction with PagSeguro online payment system. The method used for this module is HTTP Parameters. XML suppor coming soon!
+This is a Node.js package which provides interaction with PagSeguro online payment system. The method used for this module is HTTP Parameters. XML support coming soon!
 
 After you create your seller account and generated your token, you can start making requests.
 
