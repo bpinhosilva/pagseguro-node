@@ -1,6 +1,6 @@
 {
   "name": "pagseguro-node",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "This is a Node.js package which provides interaction with PagSeguro online payment system.",
   "main": "index.js",
   "scripts": {
