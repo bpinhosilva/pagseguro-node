@@ -15,7 +15,7 @@ Depois de criar sua conta de vendedor e gerar seu token, poderá começar a faze
 Tenha em mente que você pode usar token em dois ambientes: sandbox (teste) e produção. Eles são fornecidos pela API do PagSeguro, para maiores informações, leia a documentação deles.
 
 ### Version (Versão)
-1.0.1
+1.0.2
 
 ### Installation (Instalação)
 
