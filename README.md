@@ -101,6 +101,9 @@ app.listen(3000, function () {
 
 ### Changelog
 
+Version 1.0.2 (Feb. 9th, 2016)
+* Fixed a bug when adding more items to list and generating only one during request.
+
 Version 1.0.1 (Feb. 8th, 2016)
 * Created a few more methods:
 setToken, setEmail, setMode, setRedirectURL, setNotificationURL, setReference.
