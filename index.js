@@ -100,10 +100,7 @@ var PagSeguro = function (email, token, charset) {
           PROD_MODE = true;
       }
       else if (typeof mode === 'boolean') {
-        if (mode)
-          PROD_MODE = true;
-        else
-          PROD_MODE = false;
+        PROD_MODE = mode;
       }
       else {
         console.log('Invalid mode, default set: PROD');
